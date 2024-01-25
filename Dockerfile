@@ -4,6 +4,12 @@ COPY pom.xml /
 RUN mvn -f /pom.xml clean package
 
 FROM openjdk:17-jdk-slim
+<<<<<<< HEAD
 COPY --from-build /target/*.jar app.jar
 EXPOSE 8069
 ENTRYPOINT ["java", "-jar", "app.jar"]
+=======
+COPY --from=build /target/*.jar application.jar
+EXPOSE 8021
+ENTRYPOINT ["java", "-jar", "application.jar"]
+>>>>>>> 52825d8 (Initial commit)

@@ -1,20 +1,20 @@
-server:
-  port: 8021
 spring:
   config:
     import: optional:file:.env[.properties]
   datasource:
-    url: jdbc:postgresql://${HOST:localhost}:5432/${POSTGRES_DB:data_analyzer_microservice}
-    username: ${POSTGRES_USERNAME:postgres}
-    password: ${POSTGRES_PASSWORD:1505Duma}
+    url: jdbc:postgresql://${HOST}/${POSTGRES_DB}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
   liquibase:
     change-log: classpath:liquibase/db.changelog.yaml
     enabled: true
-topics: ${KAFKA_SUBSCRIBED_TOPICS:data-temperature,data-power,data-voltage}
+server:
+  port: 8082
 
+topics: ${KAFKA_SUBSCRIBED_TOPICS}
 

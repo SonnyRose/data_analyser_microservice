@@ -1,0 +1,133 @@
+version: '3.0'
+
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  db-data:
+    driver: local
+  redis-data:
+    driver: local
+  kafka-data:
+    driver: local
+  zookeeper-data:
+    driver: local
+  debezium-data:
+    driver: local
+
+services:
+  generator:
+    image: 'ilyalisov/data-generator-microservice:latest'
+    networks:
+      - app
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+      - KAFKA_SUBSCRIBED_TOPICS=${KAFKA_SUBSCRIBED_TOPICS}
+    ports:
+      - '8069:8069'
+  analyser:
+    image: 'ilyalisov/data-analyser-microservice:latest'
+    networks:
+      - app
+    depends_on:
+      - postgres
+      - kafka
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+      - KAFKA_SUBSCRIBED_TOPICS=${KAFKA_SUBSCRIBED_TOPICS}
+      - HOST=${HOST}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+    ports:
+      - '8021:8021'
+
+  store:
+    image: 'ilyalisov/data-store-microservice:latest'
+    networks:
+      - app
+    depends_on:
+      - debezium
+      - redis
+      - kafka
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+      - DEBEZIUM_KAFKA_BROKER_ID=${DEBEZIUM_KAFKA_BROKER_ID}
+    ports:
+      - '8083:8083'
+
+  zookeeper:
+    image: 'confluentinc/cp-zookeeper:latest'
+    networks:
+      - app
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=${ZOOKEEPER_CLIENT_PORT}
+      - ZOOKEEPER_TICK_TIME=${ZOOKEEPER_TICK_TIME}
+      -
+    ports:
+      - '2181:2181'
+    volumes:
+      - zookeeper-data:/var/lib/zookeeper/data
+
+  kafka:
+    image: 'confluentinc/cp-kafka:latest'
+    networks:
+      - app
+    environment:
+      - KAFKA_BROKER_ID=${KAFKA_BROKER_ID}
+      - DEBEZIUM_KAFKA_BROKER_ID=${DEBEZIUM_KAFKA_BROKER_ID}
+      - KAFKA_ZOOKEEPER_CONNECT=${KAFKA_ZOOKEEPER_CONNECT}
+      - KAFKA_ADVERTISED_LISTENER=PLAINTEXT://kafka:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT, PLAINTEXT_INTERNAL:PLAINTEXT
+      - KAFKA_OFFSET_TOPIC_REPLICATION_FACTOR=${KAFKA_OFFSET_TOPIC_REPLICATION_FACTOR}
+    ports:
+      - '9092:9092'
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+  postgres:
+    image: 'postgres:latest'
+    networks:
+      - app
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=logical"
+    ports:
+      - '5437:5432'
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7.2-rc-alpine
+    networks:
+      - app
+    env_file:
+      - .env
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - redis-data:/data/
+
+  debezium:
+    image: 'debezium/connect:latest'
+    networks:
+      - app
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS}
+      - GROUP_ID=${DEBEZIUM_KAFKA_BROKER_ID}
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+    user: root
+    volumes:
+      - debezium-data:/debezium/data
+      - ./conf/:/on-startup/
