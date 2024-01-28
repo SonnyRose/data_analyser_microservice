@@ -18,14 +18,21 @@ public class LocalDateTimeDeserializer implements JsonDeserializer<LocalDateTime
             Type typeOfT,
             JsonDeserializationContext context
     ) {
-        JsonArray jsonArray = json.getAsJsonArray();
-        int year = jsonArray.get(0).getAsInt();
-        int month = jsonArray.get(1).getAsInt();
-        int day = jsonArray.get(2).getAsInt();
-        int hour = jsonArray.get(3).getAsInt();
-        int minute = jsonArray.get(4).getAsInt();
-        int second = jsonArray.get(5).getAsInt();
-        return LocalDateTime.of(year, month, day, hour, minute, second);
+        if (json.isJsonArray()){
+            JsonArray jsonArray = json.getAsJsonArray();
+            int year = jsonArray.get(0).getAsInt();
+            int month = jsonArray.get(1).getAsInt();
+            int day = jsonArray.get(2).getAsInt();
+            int hour = jsonArray.get(3).getAsInt();
+            int minute = jsonArray.get(4).getAsInt();
+            int second = jsonArray.get(5).getAsInt();
+            return LocalDateTime.of(year, month, day, hour, minute, second);
+        }else if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()){
+            return LocalDateTime.parse(json.getAsJsonPrimitive().getAsString());
+        }else {
+            throw new JsonParseException("Invalid JSON format for LocalDateTime");
+        }
+
     }
         //цей метод для того, що LocalDateTime вертається як масив, а треба як числа
 

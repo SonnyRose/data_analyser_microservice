@@ -12,9 +12,11 @@ public final class TextXPath {
 
     @Override
     public String toString() {
-        return this.xml.nodes(this.node)
-                .get(0)
-                .xpath("text()")
-                .get(0);
+        List<XML> nodes = this.xml.nodes(this.node);
+        if (nodes.isEmpty()) {
+            return null;
+        } else {
+            return nodes.get(0).xpath("text()").get(0);
+        }
     }
 }
