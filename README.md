@@ -1,7 +1,7 @@
 # This is one part of a massive project called "data-microservice".
-## This part of "data_analyser_microservice" performs the function of analysing and saving data to database using Apahce Kakfa and Liquibase.
+## This part of "data_analyser_microservice" performs the function of analysing and saving data to database using Apache Kafka and Liquibase.
 
-After receiving data from "data_generator_microservicе", "data-analyser-microservice" processes it, structures and stores it in a database using PostgreSQL and integrates it into Liqubase.
+After receiving data from "data_generator_microservice", "data-analyser-microservice" processes it, structures and stores it in a database using PostgreSQL and integrates it into Liqubase.
 
 After all movements "data_analyser_microservice" send already structured and saved data sends to "data_store_microservice" where incoming data finally structures and statistics of incoming data are created.
 After all movements "data_analyser_microservice" send already structured and saved data sends to "data_store_microservice" where incoming data finally structures and statistics of incoming data are created.
