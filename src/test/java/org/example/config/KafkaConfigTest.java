@@ -16,6 +16,5 @@ public class KafkaConfigTest {
         Map<String, Object> properties = new KafkaConfig(settings).receiverProperties();
 
         assertEquals("testGroup", properties.get(ConsumerConfig.GROUP_ID_CONFIG));
-        // ... (assert other properties)
     }
 }
