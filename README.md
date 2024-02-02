@@ -2,7 +2,11 @@
 ## This part of "data_analyser_microservice" performs the function of analysing and saving data to database using Apahce Kakfa and Liquibase.
 
 After receiving data from "data_generator_microservicе", "data-analyser-microservice" processes it, structures and stores it in a database using PostgreSQL and integrates it into Liqubase.
+<<<<<<< HEAD
 After all movements "data_analyser_microservice" send already structured and saved data sends to "data_store_microservice" where incoming data finally structures and statistics of incoming data are created.
+=======
+After all of movements "data_analyser_microservice" send already structured and saved data sends to "data_store_microservice" where incoming data finally structures and statistics of incoming data are created.
+>>>>>>> origin/master
 
 Full list of technologies used for the microservice "data_ana_microservice" :
 
