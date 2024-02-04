@@ -9,7 +9,6 @@ import org.example.config.deserializer.LocalDateTimeDeserializer;
 import org.example.model.Data;
 import org.example.service.interfaces.KafkaDataReceiver;
 import org.example.service.interfaces.KafkaDataService;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import reactor.kafka.receiver.KafkaReceiver;
 
@@ -36,10 +35,16 @@ public class KafkaDataReceiverImpl implements KafkaDataReceiver {
         receiver.receive()
                 .subscribe(r -> {
                     Data data = gson.fromJson(r.value().toString(), Data.class);
-                    log.info("Received data from Kafka: {}", data);
+                    log.info("Deserialized Data: {}", data);
                     kafkaDataService.handle(data);
-                    r.receiverOffset().acknowledge();
-                    log.info("Data handling complete for: {}", data);
+
+                    if (r.receiverOffset() != null) {
+                        r.receiverOffset().acknowledge();
+                        log.info("Data handling complete for: {}", data);
+                    } else {
+                        log.warn("Receiver offset is null for Data: {}", data);
+                    }
                 });
     }
+
 }
