@@ -42,6 +42,4 @@ public class LocalDateTimeDeserializer implements JsonDeserializer<LocalDateTime
             throw new JsonParseException("Error during LocalDateTime deserialization", e);
         }
     }
-        //цей метод для того, що LocalDateTime вертається як масив, а треба як числа
-
 }

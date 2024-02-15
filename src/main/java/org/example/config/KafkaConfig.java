@@ -22,7 +22,6 @@ public class KafkaConfig {
     @Value("${topics}")
     private List<String> topics;
     private final XML settings;
-
     @Bean
     public Map<String, Object> receiverProperties() {
         Map<String, Object> props = new HashMap<>();

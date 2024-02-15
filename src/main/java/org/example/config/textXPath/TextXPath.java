@@ -9,7 +9,6 @@ import java.util.List;
 public final class TextXPath {
     private final XML xml;
     private final String node;
-
     @Override
     public String toString() {
         List<XML> nodes = this.xml.nodes(this.node);

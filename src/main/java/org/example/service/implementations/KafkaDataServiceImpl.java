@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KafkaDataServiceImpl implements KafkaDataService {
     private final DataRepository dataRepository;
-
     @Override
     public void handle(Data data) {
         try {

@@ -18,11 +18,9 @@ import java.time.LocalDateTime;
 @Slf4j
 @RequiredArgsConstructor
 public class KafkaDataReceiverImpl implements KafkaDataReceiver {
-
     private final KafkaReceiver<String, Object> receiver;
     private final LocalDateTimeDeserializer localDateTimeDeserializer;
     private final KafkaDataService kafkaDataService;
-
     @PostConstruct
     private void init() {
         fetch();
@@ -46,5 +44,4 @@ public class KafkaDataReceiverImpl implements KafkaDataReceiver {
                     }
                 });
     }
-
 }
