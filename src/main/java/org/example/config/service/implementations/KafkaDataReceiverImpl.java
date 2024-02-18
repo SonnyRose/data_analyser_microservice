@@ -1,4 +1,4 @@
-package org.example.service.implementations;
+package org.example.config.service.implementations;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -6,9 +6,9 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.config.deserializer.LocalDateTimeDeserializer;
+import org.example.config.service.interfaces.KafkaDataReceiver;
+import org.example.config.service.interfaces.KafkaDataService;
 import org.example.model.Data;
-import org.example.service.interfaces.KafkaDataReceiver;
-import org.example.service.interfaces.KafkaDataService;
 import org.springframework.stereotype.Service;
 import reactor.kafka.receiver.KafkaReceiver;
 

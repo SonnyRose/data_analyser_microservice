@@ -1,10 +1,10 @@
-package org.example.service.implementations;
+package org.example.config.service.implementations;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.config.service.interfaces.KafkaDataService;
 import org.example.model.Data;
 import org.example.repository.DataRepository;
-import org.example.service.interfaces.KafkaDataService;
 import org.springframework.stereotype.Service;
 
 
