@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -36,9 +37,11 @@ public class KafkaDataServiceImplTest {
     @Mock
     private Logger logger;
     @Container
+    @ServiceConnection
     private static final PostgreSQLContainer<?> postgres =
             new PostgreSQLContainer<>("postgres:latest");
     @Container
+    @ServiceConnection
     private static final KafkaContainer kafka =
             new KafkaContainer(
                     DockerImageName
@@ -86,7 +89,27 @@ public class KafkaDataServiceImplTest {
     }
     @Test
     public void kafkaIsCreatedAndStarted(){
+        assertThat(kafka.isCreated()).isTrue();
+        assertThat(kafka.isRunning()).isTrue();
+    }
+    @Test
+    public void postgresSettingsMatches(){
+        assertThat(postgres.getJdbcUrl())
+                .isEqualTo("jdbc:postgresql://postgres:5432data_analyzer_microservice");
 
+        assertThat(postgres.getPassword())
+                .isEqualTo("1505Duma");
+
+        assertThat(postgres.getUsername())
+                .isEqualTo("postgres");
+
+        assertThat(postgres.getDatabaseName())
+                .isEqualTo("data_analyzer_microservice");
+    }
+    @Test
+    public void kafkaSettingsMatches(){
+        assertThat(kafka.getBootstrapServers())
+                .isEqualTo("localhost:9092");
     }
     private Data createData(){
         Data data = new Data();
