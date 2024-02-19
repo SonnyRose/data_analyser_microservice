@@ -1,4 +1,4 @@
-package org.example.config.service.interfaces;
+package org.example.service.interfaces;
 
 public interface KafkaDataReceiver {
     void fetch();

@@ -3,7 +3,7 @@ package org.example.service;
 import org.example.model.Data;
 import org.example.model.measurementType.MeasurementType;
 import org.example.repository.DataRepository;
-import org.example.config.service.implementations.KafkaDataServiceImpl;
+import org.example.service.implementations.KafkaDataServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,6 +22,8 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.time.LocalDateTime;
 
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 
@@ -43,6 +45,7 @@ public class KafkaDataServiceImplTest {
                             .parse("confluentinc/cp-kafka:latest"));
     @InjectMocks
     private KafkaDataServiceImpl service;
+
     @DynamicPropertySource
     private static void configureProperties(DynamicPropertyRegistry registry){
         registry.add("spring.datasource.url=", postgres::getJdbcUrl);
@@ -58,24 +61,32 @@ public class KafkaDataServiceImplTest {
         postgres.start();
     }
     @Test
-    void handle_validData_shouldSaveToRepository() {
+    public void handle_validData_shouldSaveToRepository() {
         Data data = createData();
         service.handle(data);
         verify(dataRepository).save(data);
         verifyNoMoreInteractions(logger);
     }
-
     @Test
-    void handle_exceptionThrown_shouldLogError() {
+    public void handle_exceptionThrown_shouldLogError() {
         doThrow(new RuntimeException("Database error")).when(dataRepository).save(any());
         Data data = createData();
         service.handle(data);
         verify(logger).error(eq("Error handling data: {}"), eq(data), any());
     }
     @Test
-    void handle_nullData_shouldNotThrowException() {
+    public void handle_nullData_shouldNotThrowException() {
         service.handle(null);
         verifyNoInteractions(dataRepository, logger);
+    }
+    @Test
+    public void postgresIsCreatedAndStarted(){
+        assertThat(postgres.isCreated()).isTrue();
+        assertThat(postgres.isRunning()).isTrue();
+    }
+    @Test
+    public void kafkaIsCreatedAndStarted(){
+
     }
     private Data createData(){
         Data data = new Data();

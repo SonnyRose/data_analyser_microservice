@@ -1,4 +1,4 @@
-package org.example.config.service.interfaces;
+package org.example.service.interfaces;
 
 import org.example.model.Data;
 
